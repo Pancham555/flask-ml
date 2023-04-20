@@ -1,7 +1,7 @@
 import pandas as pd
 from nltk.tokenize import word_tokenize
 import numpy as np
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
@@ -25,6 +25,11 @@ X = vectorizer.fit_transform(corpus)
 
 # Set the similarity threshold
 SIMILARITY_THRESHOLD = 0.6
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 
 @app.route('/chat/<input>', methods=['GET'])
