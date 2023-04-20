@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+    <!-- Include Tailwind CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.15/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body class="bg-gray-100">
+    <div class="max-w-lg mx-auto mt-10">
+      <div class="rounded-lg bg-white shadow-lg p-4">
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold mb-2" for="user_input">
+            User Input:
+          </label>
+          <input
+            class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="user_input"
+            type="text"
+            placeholder="Enter your message..."
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold mb-2" for="bot_response">
+            Bot Response:
+          </label>
+          <textarea
+            class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="bot_response"
+            rows="5"
+            readonly
+          ></textarea>
+        </div>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          id="submit_btn"
+        >
+          Send
+        </button>
+      </div>
+      <div class="rounded-lg bg-white shadow-lg mt-4 p-4">
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold mb-2" for="suggest_input">
+            Suggest a Better Response:
+          </label>
+          <textarea
+            class="border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="suggest_input"
+            rows="5"
+          ></textarea>
+        </div>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          id="suggest_btn"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Send user input to server and get bot response
+      function getBotResponse() {
+        const user_input = document.getElementById("user_input").value;
+        fetch(`/get?msg=${user_input}`)
+          .then((response) => response.text())
+          .then((data) => {
+            document.getElementById("bot_response").value = data;
+          });
+      }
+
+      // Submit suggestion to server
+      function suggestResponse() {
+        const user_input = document.getElementById("user_input").value;
+        const better_response = document.getElementById("suggest_input").value;
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "/suggest");
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.send(`user_input=${user_input}&better_response=${better_response}`);
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            alert("Thank you for your suggestion!");
+          }
+        };
+      }
+
+      // Add event listeners to buttons
+      document
+        .getElementById("submit_btn")
+        .addEventListener("click", getBotResponse);
+      document
+        .getElementById("suggest_btn")
+        .addEventListener("click", suggestResponse);
+    </script>
+  </body>
+</html>
